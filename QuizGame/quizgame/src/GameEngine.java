@@ -7,14 +7,13 @@ public class GameEngine {
     private QuestionPool questionPool;
     private Leaderboard leaderboard;
     private Scanner scanner;
-    // Zaman ayarlı girdi için ExecutorService tanımı
     private ExecutorService executor;
 
-    // Difficulty scaling thresholds
+  
     private static final int MEDIUMTHRESHOLD = 3;
     private static final int HARDTHRESHOLD = 7;
 
-    // Time limits per difficulty (seconds)
+   
     private static final int TIMEEASY   = 15;
     private static final int TIMEMEDIUM = 12;
     private static final int TIMEHARD   = 9;
@@ -25,28 +24,27 @@ public class GameEngine {
         this.questionPool = new QuestionPool();
         this.leaderboard = new Leaderboard();
         this.scanner = new Scanner(System.in);
-        // Arka plan görevlerini yönetecek thread havuzunu oluşturuyoruz
+        
         this.executor = Executors.newSingleThreadExecutor();
     }
 
-    // Kullanıcıdan zaman ayarlı girdi alan yardımcı metot
+    
     private String getInputWithTimeout(int seconds) throws TimeoutException, InterruptedException, ExecutionException {
         Callable<String> task = () -> {
             while (!Thread.currentThread().isInterrupted()) {
                 if (System.in.available() > 0) {
                     return scanner.nextLine().trim().toUpperCase();
                 }
-                Thread.sleep(50); // İşlemciyi yormamak için küçük bir bekleme
+                Thread.sleep(50); 
             }
             return "";
         };
 
         Future<String> future = executor.submit(task);
         try {
-            // Belirtilen süre boyunca girdiyi bekler
             return future.get(seconds, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            future.cancel(true); // Süre dolduğunda görevi iptal et
+            future.cancel(true); 
             throw e;
         }
     }
@@ -66,10 +64,8 @@ public class GameEngine {
         for (Question question : questions) {
             questionNumber++;
 
-            // Progressive difficulty: skip questions not matching current tier
             String currentTier = getCurrentTier(questionNumber);
             if (!question.getDifficulty().equals(currentTier) && questionNumber <= 5) {
-                // For first 5 questions, only show easy questions
                 if (!question.getDifficulty().equals("easy")) continue;
             }
 
@@ -79,11 +75,10 @@ public class GameEngine {
                 return;
             }
 
-            // Small pause feel between questions
             System.out.println();
         }
 
-        endGame(true); // Completed all questions
+        endGame(true); 
     }
 
     private String getCurrentTier(int questionNumber) {
@@ -92,7 +87,6 @@ public class GameEngine {
         return "hard";
     }
 
-    // Returns true if game over condition is triggered
     private boolean askQuestion(Question question, int number) {
         int timeLimit = getTimeLimit(question.getDifficulty());
         long startTime = System.currentTimeMillis();
@@ -106,15 +100,13 @@ public class GameEngine {
         System.out.println("  │ " + question.getQuestionText());
         System.out.println("  │");
 
-        boolean[] eliminated = new boolean[4]; // tracks 50/50 eliminated options
+        boolean[] eliminated = new boolean[4];
 
-        // Show joker status
         System.out.println("  │ [J1] 50/50 (" + player.getJoker5050() + " left)"
             + "  [J2] Time Freeze (" + player.getJokerFreeze() + " left)");
         System.out.println("  │ Time limit: " + timeLimit + "s");
         System.out.println("  │");
 
-        // Print options
         String[] opts = question.getOptions();
         for (int i = 0; i < 4; i++) {
             if (!eliminated[i]) {
@@ -125,16 +117,15 @@ public class GameEngine {
 
         String input = "";
         try {
-            // Zaman ayarlı girdiyi çağırıyoruz
             input = getInputWithTimeout(timeLimit);
         } catch (TimeoutException e) {
             System.out.println("\n\n  ⏰ TIME'S UP! You have exceeded the time limit.");
             return handleWrongAnswer();
         } catch (Exception e) {
-            input = ""; // Olası diğer hatalarda boş girdi kabul etsin
+            input = ""; 
         }
 
-        // Handle jokers
+     
         if (input.equals("J1")) {
             if (player.useJoker5050()) {
                 int[] toEliminate = questionPool.getFiftyFiftyEliminations(question);
@@ -148,7 +139,6 @@ public class GameEngine {
                 }
                 System.out.print("  └─ Your answer (A/B/C/D): ");
                 
-                // Joker sonrası kalan süreyi hesapla
                 long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
                 int remainingTime = Math.max(1, timeLimit - (int)elapsedTime);
                 
@@ -173,16 +163,16 @@ public class GameEngine {
         } else if (input.equals("J2")) {
             if (player.useJokerFreeze()) {
                 freezeActive = true;
-                timeLimit = 999; // effectively paused
+                timeLimit = 999; 
                 System.out.println("  ► Time Freeze activated! Take your time.\n");
                 for (int i = 0; i < 4; i++) {
-                    if (!eliminated[i]) { // Elenenler varsa onları tekrar basma
+                    if (!eliminated[i]) { 
                         System.out.println("       " + opts[i]);
                     }
                 }
                 System.out.print("  └─ Your answer (A/B/C/D): ");
                 try {
-                    // Dondurma aktifken geniş bir süre (999sn) veriyoruz
+                    
                     input = getInputWithTimeout(timeLimit);
                 } catch (TimeoutException e) {
                     System.out.println("\n\n  ⏰ TIME'S UP! You have exceeded the time limit.");
@@ -202,23 +192,20 @@ public class GameEngine {
             }
         }
 
-        // Convert letter to index
+       
         int answerIndex = letterToIndex(input);
         if (answerIndex == -1) {
             System.out.println("  [!] Invalid input — counted as wrong answer.");
             return handleWrongAnswer();
         }
 
-        // Check if eliminated by 50/50
+       
         if (eliminated[answerIndex]) {
             System.out.println("  [!] That option was eliminated by 50/50 — counted as wrong.");
             return handleWrongAnswer();
         }
 
-        // Evaluate answer
         if (question.isCorrect(answerIndex)) {
-            // Kalan gerçek zamana göre puan hesaplamak istersen elapsedTime kullanabilirsin.
-            // Mevcut yapıyı bozmamak için direkt çağrıldı.
             int points = calculatePoints(question.getDifficulty(), timeLimit, freezeActive);
             player.addScore(points);
             player.resetWrongStreak();
@@ -287,7 +274,6 @@ public class GameEngine {
         leaderboard.saveScore(player.getName(), player.getScore());
         leaderboard.displayLeaderboard();
         
-        // Uygulamanın arka planda asılı kalmaması için executor'ı kapatıyoruz
         executor.shutdown();
     }
 }
