@@ -6,7 +6,7 @@ import java.util.List;
 public class Leaderboard {
     private static final String FILENAME = "leaderboard.txt";
 
-    // Save a player's score to file
+  
     public void saveScore(String playerName, int score) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
             writer.write(playerName + ":" + score);
@@ -16,7 +16,7 @@ public class Leaderboard {
         }
     }
 
-    // Read and display top 5 scores
+   
     public void displayLeaderboard() {
         List<String[]> entries = new ArrayList<>();
 
@@ -39,7 +39,6 @@ public class Leaderboard {
             return;
         }
 
-        // Sort by score descending
         entries.sort((a, b) -> Integer.parseInt(b[1]) - Integer.parseInt(a[1]));
 
         System.out.println("\n  ╔══════════════════════════════╗");
