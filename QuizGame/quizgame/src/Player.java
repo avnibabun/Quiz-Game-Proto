@@ -2,15 +2,15 @@
 public class Player {
     private String name;
     private int score;
-    private int lives;          // consecutive wrong answers → game over
-    private int joker5050;      // 50/50 lifeline count
-    private int jokerFreeze;    // time freeze lifeline count
-    private int wrongStreak;    // consecutive wrong answer counter
+    private int lives;          
+    private int joker5050;      
+    private int jokerFreeze;    
+    private int wrongStreak;    
 
     public Player(String name) {
         this.name = name;
         this.score = 0;
-        this.lives = 3;         // 3 consecutive wrongs = game over
+        this.lives = 3;         
         this.joker5050 = 1;
         this.jokerFreeze = 1;
         this.wrongStreak = 0;
@@ -20,7 +20,7 @@ public class Player {
     public void resetWrongStreak()      { wrongStreak = 0; }
     public boolean incrementWrongStreak() {
         wrongStreak++;
-        return wrongStreak >= 3; // returns true if game over condition met
+        return wrongStreak >= 3; 
     }
 
     public boolean useJoker5050() {
