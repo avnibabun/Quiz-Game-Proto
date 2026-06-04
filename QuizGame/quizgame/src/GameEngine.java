@@ -128,7 +128,7 @@ public class GameEngine {
             // Zaman ayarlı girdiyi çağırıyoruz
             input = getInputWithTimeout(timeLimit);
         } catch (TimeoutException e) {
-            System.out.println("\n\n  ⏰ SÜRE DOLDU! Zaman sınırını aştınız.");
+            System.out.println("\n\n  ⏰ TIME'S UP! You have exceeded the time limit.");
             return handleWrongAnswer();
         } catch (Exception e) {
             input = ""; // Olası diğer hatalarda boş girdi kabul etsin
@@ -155,7 +155,7 @@ public class GameEngine {
                 try {
                     input = getInputWithTimeout(remainingTime);
                 } catch (TimeoutException e) {
-                    System.out.println("\n\n  ⏰ SÜRE DOLDU! Zaman sınırını aştınız.");
+                    System.out.println("\n\n  ⏰ TIME'S UP! You have exceeded the time limit.");
                     return handleWrongAnswer();
                 } catch (Exception e) { input = ""; }
             } else {
@@ -166,7 +166,7 @@ public class GameEngine {
                 try {
                     input = getInputWithTimeout(remainingTime);
                 } catch (TimeoutException e) {
-                    System.out.println("\n\n  ⏰ SÜRE DOLDU! Zaman sınırını aştınız.");
+                    System.out.println("\n\n  ⏰ TIME'S UP! You have exceeded the time limit.");
                     return handleWrongAnswer();
                 } catch (Exception e) { input = ""; }
             }
@@ -185,7 +185,7 @@ public class GameEngine {
                     // Dondurma aktifken geniş bir süre (999sn) veriyoruz
                     input = getInputWithTimeout(timeLimit);
                 } catch (TimeoutException e) {
-                    System.out.println("\n\n  ⏰ SÜRE DOLDU! Zaman sınırını aştınız.");
+                    System.out.println("\n\n  ⏰ TIME'S UP! You have exceeded the time limit.");
                     return handleWrongAnswer();
                 } catch (Exception e) { input = ""; }
             } else {
