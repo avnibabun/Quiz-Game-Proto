@@ -1,9 +1,9 @@
 
 public class Question {
     private String questionText;
-    private String[] options;       // 4 options: A, B, C, D
-    private int correctIndex;       // 0=A, 1=B, 2=C, 3=D
-    private String difficulty;      // "easy", "medium", "hard"
+    private String[] options;       
+    private int correctIndex;       
+    private String difficulty;      
 
     public Question(String questionText, String[] options, int correctIndex, String difficulty) {
         this.questionText = questionText;
