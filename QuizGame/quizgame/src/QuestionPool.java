@@ -123,14 +123,14 @@ public class QuestionPool {
         Collections.shuffle(questions);
     }
 
-    // Returns a shuffled copy of all questions
+    
     public List<Question> getAllQuestions() {
         List<Question> copy = new ArrayList<>(questions);
         Collections.shuffle(copy);
         return copy;
     }
 
-    // Apply 50/50: returns indices of 2 wrong options to hide
+    
     public int[] getFiftyFiftyEliminations(Question question) {
         List<Integer> wrongIndices = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
